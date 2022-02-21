@@ -26,7 +26,7 @@ if not os.path.exists(args.settings_file):
     exit()
 
 try:
-    password = str(getpass.getpass('Please enter the sending email password: '))
+    password = str(getpass.getpass('Enter the sending email password: '))
     context = ssl.create_default_context()
     downlist = []
 
