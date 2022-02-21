@@ -17,7 +17,7 @@ config = configparser.ConfigParser()
 if not os.path.exists(args.settings_file):
     config['DEFAULT'] = {'interval' : '10',
                         'sender_email' : '',
-                        'reciever' : '',
+                        'recipient_email' : '',
                         'smtp_port' : '465',
                         'watchlist' : ''}
     with open(args.settings_file, 'w') as configfile:
@@ -36,7 +36,7 @@ try:
         sleeptime   = config['DEFAULT']['interval']
         watchlist   = config['DEFAULT']['watchlist']
         email       = config['DEFAULT']['sender_email']
-        reciever    = config['DEFAULT']['reciever']
+        reciever    = config['DEFAULT']['recipient_email']
         port        = config['DEFAULT']['smtp_port']
         watchlist   = watchlist.replace(' ', '').split(',')
         for ip in watchlist:
