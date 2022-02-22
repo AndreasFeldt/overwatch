@@ -19,6 +19,7 @@ if not os.path.exists(args.settings_file):
                         'sender_email' : '',
                         'recipient_email' : '',
                         'smtp_port' : '465',
+                        'smtp_server' : 'smtp.gmail.com',
                         'watchlist' : ''}
     with open(args.settings_file, 'w') as configfile:
         config.write(configfile)
@@ -27,6 +28,7 @@ if not os.path.exists(args.settings_file):
 
 try:
     password = str(getpass.getpass('Enter the sending email password: '))
+    print('OK!')
     context = ssl.create_default_context()
     downlist = []
     setup_test = False
@@ -39,6 +41,7 @@ try:
         email       = config['DEFAULT']['sender_email']
         reciever    = config['DEFAULT']['recipient_email']
         port        = config['DEFAULT']['smtp_port']
+        smtp_server = config['DEFAULT']['smtp_server']
         watchlist   = watchlist.replace(' ', '').split(',')
 
         if setup_test == False:
@@ -50,8 +53,14 @@ try:
                     server.login(email, password)
                     server.sendmail(email, reciever, message)
                 setup_test = True
+                print('A test email should have been sent to you. Please check your inbox.')
+            except smtplib.SMTPAuthenticationError:
+                print('Authentication error! Please check your email authentication details!')
+                print('Quitting!')
+                exit()
             except:
-                print('\nThere is an error in your current email config.')
+                print('There is an error in your current email config.')
+                print('Quitting!')
                 exit()
 
         for ip in watchlist:
@@ -65,7 +74,7 @@ try:
                 message = f"Subject: Warning! Server Down! \
                             \n{ip} is down! \nIf this is expexted please ignore this message. \
                             \nTimestamp: {datetime.datetime.now()}"
-                with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+                with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
                     server.login(email, password)
                     server.sendmail(email, reciever, message)
                 downlist.append(ip)
