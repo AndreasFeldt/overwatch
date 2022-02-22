@@ -29,6 +29,7 @@ try:
     password = str(getpass.getpass('Enter the sending email password: '))
     context = ssl.create_default_context()
     downlist = []
+    setup_test = False
 
     while True:
         config.read(args.settings_file)
@@ -39,6 +40,20 @@ try:
         reciever    = config['DEFAULT']['recipient_email']
         port        = config['DEFAULT']['smtp_port']
         watchlist   = watchlist.replace(' ', '').split(',')
+
+        if setup_test == False:
+            try:
+                message = f"Subject: Monitoring Working Correctly. \
+                            \nIf you get this message, everything is working correctly. This is just a test. \
+                            \nTimestamp: {datetime.datetime.now()}"
+                with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+                    server.login(email, password)
+                    server.sendmail(email, reciever, message)
+                setup_test = True
+            except:
+                print('\nThere is an error in your current email config.')
+                exit()
+
         for ip in watchlist:
             response = os.system(f"ping -c 1 {ip} >> /dev/null 2>&1")
             if response == 0:
